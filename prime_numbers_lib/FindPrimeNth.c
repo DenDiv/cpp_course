@@ -38,7 +38,7 @@ void print_erat_table(char *p, int num_bytes)
     }
 }
 
-unsigned long long FindPrimeErat(int n)
+unsigned long long FINDPRIMENTHCALL FindPrimeErat(int n)
 {
     assert(n > 0);
     if (n == 1)
@@ -80,7 +80,7 @@ unsigned long long FindPrimeErat(int n)
     // print_erat_table(p, num_bytes);
 }
 
-unsigned long long FindPrimeDummy(int n)
+unsigned long long FINDPRIMENTHCALL FindPrimeDummy(int n)
 {
     unsigned long long i = 1;
     int prime_counter = 0;
