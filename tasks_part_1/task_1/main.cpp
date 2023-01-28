@@ -3,7 +3,7 @@
 
 int main()
 {
-    /* Start with the empty list */
+    /* Reverse list task */
     LinkedList ll;
     ll.push(20);
     ll.push(4);
