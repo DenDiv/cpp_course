@@ -11,14 +11,14 @@ NaryTree::NaryTree(int value)
     root = new tree_t();
     root->data = new int;
     *((int *)root->data) = value;
-    root->top = NULL;
-    root->children = NULL;
+    root->top = nullptr;
+    root->children = nullptr;
     root->num_children = 0;
 }
 
 void NaryTree::add_children(tree_p node, const std::vector<int> &vect)
 {
-    if (node->children != NULL)
+    if (node->children != nullptr)
     {
         throw std::invalid_argument("node already has children");
     }
@@ -37,7 +37,7 @@ void NaryTree::add_children(tree_p node, const std::vector<int> &vect)
         node->children[i]->data = new int;
         *((int *)node->children[i]->data) = vect[i];
         node->children[i]->top = node;
-        node->children[i]->children = NULL;
+        node->children[i]->children = nullptr;
         node->children[i]->num_children = 0;
     }
 }
@@ -47,7 +47,7 @@ std::vector<size_t> NaryTree::path2root(tree_p node)
     /* Path from root to received node*/
     std::vector<size_t> path;
     size_t addr;
-    while (node != NULL)
+    while (node != nullptr)
     {
         addr = reinterpret_cast<size_t>(node);
         path.push_back(addr);
@@ -82,7 +82,7 @@ void NaryTree::print()
 {
     /*For simplicity suppose that all data values are different*/
     std::queue<tree_p> q;
-    std::string print_ch = "";
+    std::string print_ch;
     tree_p visited_node;
     int *pInt;
     q.push(root);

@@ -1,14 +1,10 @@
 #include <iostream>
 #include "LinkedList.h"
 
-LinkedList::LinkedList()
-{
-    head = NULL;
-}
 void LinkedList::print()
 {
     list_p current_p = head;
-    while (current_p != NULL)
+    while (current_p != nullptr)
     {
         int *pInt = static_cast<int *>(current_p->data);
         std::cout << *pInt << " ";
@@ -26,8 +22,8 @@ void LinkedList::push(int value)
 void LinkedList::reverse()
 {
     list_p current_p = head;
-    list_p prev_p = NULL, next_p = NULL;
-    while (current_p != NULL)
+    list_p prev_p = nullptr, next_p = nullptr;
+    while (current_p != nullptr)
     {
         next_p = current_p->next;
         current_p->next = prev_p;
@@ -35,4 +31,16 @@ void LinkedList::reverse()
         current_p = next_p;
     }
     head = prev_p;
+}
+
+LinkedList::~LinkedList()
+{
+    list_p current_p;
+
+    while (head != nullptr)
+    {
+        current_p = head;
+        head = head->next;
+        delete current_p;
+    }
 }

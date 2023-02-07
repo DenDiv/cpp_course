@@ -11,12 +11,12 @@ int main()
     ll.push(85);
     ll.push(123);
 
-    std::cout << "Given linked list\n";
+    std::cout << "Given linked list" << std::endl;
     ll.print();
 
     ll.reverse();
 
-    std::cout << "\nReversed linked list \n";
+    std::cout << std::endl << "Reversed linked list" << std::endl;
     ll.print();
     return 0;
 }

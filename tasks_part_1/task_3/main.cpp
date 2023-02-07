@@ -15,7 +15,7 @@ int main()
     tree.add_children(tree.root->children[0]->children[1], vec_3);
     tree.add_children(tree.root->children[2], vec_4);
 
-    std::cout << "Source Tree: \n";
+    std::cout << "Source Tree: " << std::endl;
     tree.print();
     tree_p node_1, node_2;
     size_t min_path;

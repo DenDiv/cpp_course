@@ -21,9 +21,9 @@ int main()
 
     matrix_t matrix(source_matrix, m_dim, n_dim);
     matrix_p transposed_matrix;
-    std::cout << "Source matrix: \n";
+    std::cout << "Source matrix: " << std::endl;
     matrix.print();
-    std::cout << "\nResult matrix: \n";
+    std::cout << std::endl << "Result matrix: " << std::endl;
     transposed_matrix = matrix.transpose();
     (*transposed_matrix).print();
 

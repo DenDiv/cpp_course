@@ -6,8 +6,8 @@ typedef struct list_tag
 
 struct LinkedList
 {
-    list_p head;
-    LinkedList();
+    list_p head = nullptr;
+    ~LinkedList();
     void print();
     void push(int value);
     void reverse();

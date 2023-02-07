@@ -31,7 +31,7 @@ void matrix_tag::print()
         {
             std::cout << matrix[i][j] << " ";
         }
-        std::cout << "\n";
+        std::cout << std::endl;
     }
 }
 
