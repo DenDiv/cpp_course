@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <sstream>
 #include "NaryTree.h"
 
 NaryTree::NaryTree(int value)
@@ -82,7 +83,7 @@ void NaryTree::print()
 {
     /*For simplicity suppose that all data values are different*/
     std::queue<tree_p> q;
-    std::string print_ch;
+    std::stringstream print_ch;
     tree_p visited_node;
     int *pInt;
     q.push(root);
@@ -92,15 +93,15 @@ void NaryTree::print()
         visited_node = q.front();
         q.pop();
         pInt = static_cast<int *>(visited_node->data);
-        print_ch += std::to_string(*pInt) + ": ";
+        print_ch << *pInt << ": ";
 
         for (size_t i = 0; i < visited_node->num_children; i++)
         {
             pInt = static_cast<int *>(visited_node->children[i]->data);
-            print_ch += std::to_string(*pInt) + ", ";
+            print_ch << *pInt << ", ";
             q.push(visited_node->children[i]);
         }
-        print_ch += ";\n";
+        print_ch << ";" << std::endl;
     }
-    std::cout << print_ch;
+    std::cout << print_ch.str();
 }
