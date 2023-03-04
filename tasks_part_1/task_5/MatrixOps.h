@@ -1,10 +1,9 @@
-typedef struct matrix_tag
+namespace matrix_ops
 {
-    matrix_tag(size_t m_dim, size_t n_dim);
-    matrix_tag(int **matrix, size_t m_dim, size_t n_dim);
-    int **matrix;
-    size_t m_dim, n_dim;
-    matrix_tag *transpose();
-    void print();
-    int *vec_mul(int *vector, size_t vec_size);
-} matrix_t, *matrix_p;
+    void print_matrix(std::vector<std::vector<int>> &matrix, size_t m_dim, size_t n_dim);
+    void print_vector(std::vector<int> &vector);
+    void transpose(std::vector<std::vector<int>> &src_matrix, size_t src_m_dim, size_t src_n_dim,
+                   std::vector<std::vector<int>> &dst_matrix, size_t dst_m_dim, size_t dst_n_dim);
+    void vec_mul(std::vector<int> &src_vec, std::vector<std::vector<int>> &src_matrix,
+                 size_t matrix_m_dim, size_t matrix_n_dim, std::vector<int> &dst_vec);
+}

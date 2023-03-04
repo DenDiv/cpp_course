@@ -1,29 +1,8 @@
 #include <iostream>
+#include <vector>
 #include "MatrixOps.h"
 
-matrix_tag::matrix_tag(int **matrix, size_t m_dim, size_t n_dim)
-{
-    // copy matrix
-    this->matrix = new int *[m_dim];
-    for (size_t i = 0; i < m_dim; ++i)
-    {
-        this->matrix[i] = new int[n_dim];
-        for (size_t j = 0; j < n_dim; ++j)
-        {
-            this->matrix[i][j] = matrix[i][j];
-        }
-    }
-    this->m_dim = m_dim;
-    this->n_dim = n_dim;
-}
-
-matrix_tag::matrix_tag(size_t m_dim, size_t n_dim)
-{
-    this->m_dim = m_dim;
-    this->n_dim = n_dim;
-}
-
-void matrix_tag::print()
+void matrix_ops::print_matrix(std::vector<std::vector<int>> &matrix, size_t m_dim, size_t n_dim)
 {
     for (size_t i = 0; i < m_dim; ++i)
     {
@@ -35,44 +14,54 @@ void matrix_tag::print()
     }
 }
 
-matrix_p matrix_tag::transpose()
+void matrix_ops::print_vector(std::vector<int> &vector)
 {
-    int **transposed_matrix = new int *[m_dim];
-    for (size_t i = 0; i < m_dim; ++i)
+    for (int i : vector)
     {
-        transposed_matrix[i] = new int[n_dim];
+        std::cout << i << " ";
     }
-
-    for (size_t i = 0; i < m_dim; ++i)
-    {
-        for (size_t j = i; j < n_dim; ++j)
-        {
-            transposed_matrix[i][j] = matrix[j][i];
-            transposed_matrix[j][i] = matrix[i][j];
-        }
-    }
-    matrix_p matrix_struct = new matrix_t(m_dim, n_dim);
-    matrix_struct->matrix = transposed_matrix;
-    return matrix_struct;
+    std::cout << std::endl;
 }
 
-int *matrix_tag::vec_mul(int *vector, size_t vec_size)
+void matrix_ops::transpose(std::vector<std::vector<int>> &src_matrix, size_t src_m_dim, size_t src_n_dim,
+                           std::vector<std::vector<int>> &dst_matrix, size_t dst_m_dim, size_t dst_n_dim)
 {
-    if (vec_size != m_dim)
+    if (src_m_dim != dst_n_dim || src_n_dim != dst_m_dim)
     {
-        throw std::length_error("vec_size isn't equal to m_dim");
+        throw std::length_error("src_m_dim != dst_n_dim or src_n_dim != dst_m_dim");
     }
 
-    int *res_vec = new int[n_dim];
-    int tmp_val = 0;
-    for (size_t i = 0; i < n_dim; ++i)
+    for (size_t i = 0; i < src_m_dim; ++i)
     {
-        for (size_t j = 0; j < vec_size; ++j)
+        for (size_t j = i; j < src_n_dim; ++j)
         {
-            tmp_val += vector[j] * matrix[j][i];
+            dst_matrix[i][j] = src_matrix[j][i];
+            dst_matrix[j][i] = src_matrix[i][j];
         }
-        res_vec[i] = tmp_val;
+    }
+}
+
+void matrix_ops::vec_mul(std::vector<int> &src_vec, std::vector<std::vector<int>> &src_matrix,
+                         size_t matrix_m_dim, size_t matrix_n_dim, std::vector<int> &dst_vec)
+{
+    if (matrix_m_dim != src_vec.size())
+    {
+        throw std::length_error("matrix_m_dim != src_vec.size()");
+    }
+
+    if (matrix_n_dim != dst_vec.size())
+    {
+        throw std::length_error("matrix_n_dim != dst_vec.size()");
+    }
+
+    int tmp_val = 0;
+    for (size_t i = 0; i < matrix_n_dim; ++i)
+    {
+        for (size_t j = 0; j < matrix_m_dim; ++j)
+        {
+            tmp_val += src_vec[j] * src_matrix[j][i];
+        }
+        dst_vec[i] = tmp_val;
         tmp_val = 0;
     }
-    return res_vec;
 }

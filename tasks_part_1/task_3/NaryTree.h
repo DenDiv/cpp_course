@@ -1,12 +1,13 @@
 #include <vector>
 
-typedef struct tree_tag
+struct tree_t
 {
     void *data;
-    struct tree_tag *top;
-    struct tree_tag **children;
+    struct tree_t *top;
+    struct tree_t **children;
     size_t num_children;
-} tree_t, *tree_p;
+};
+using tree_p = tree_t *;
 
 struct NaryTree
 {

@@ -1,8 +1,9 @@
-typedef struct list_tag
+struct list_t
 {
     void *data;
-    struct list_tag *next;
-} list_t, *list_p;
+    struct list_t *next;
+};
+using list_p = list_t *;
 
 struct LinkedList
 {
