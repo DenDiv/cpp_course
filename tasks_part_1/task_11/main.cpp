@@ -73,6 +73,35 @@ int find_substr(char *full_str, char *substr)
     return -1;
 }
 
+char *remove_substr(char *full_str, char *substr)
+{
+    if (std::strlen(full_str) == 0 || std::strlen(substr) == 0)
+    {
+        throw std::length_error("full_str or substr is empty");
+    }
+
+    if (std::strlen(full_str) < std::strlen(substr))
+    {
+        throw std::length_error("len(full_str) < len(substr)");
+    }
+
+    int substr_idx = find_substr(full_str, substr);
+    size_t full_str_len = std::strlen(full_str);
+    size_t substr_len = std::strlen(substr);
+
+    while (substr_idx != -1)
+    {
+        for (size_t i = substr_idx; i + substr_len < full_str_len; ++i)
+        {
+            full_str[i] = full_str[i + substr_len];
+        }
+        full_str_len -= substr_len;
+        full_str[full_str_len] = '\0';
+        substr_idx = find_substr(full_str, substr);
+    }
+    return full_str;
+}
+
 int main()
 {
     /*
@@ -89,5 +118,16 @@ int main()
     char haystack[] = "Serega stal vyebivatsa so much last time";
     char needle[] = "tsa";
     int idx = find_substr(haystack, needle);
-    std::cout << idx;
+    std::cout << idx << std::endl;
+
+    /*
+    task 13. Delete all substrings needle from string haystack
+    */
+    char haystack_1[] = "fffoxoxoxfxo";
+    char needle_1[] = "fox";
+    char *res = remove_substr(haystack_1, needle_1);
+    for (size_t i = 0; i < std::strlen(res); ++i)
+    {
+        std::cout << res[i];
+    }
 }
