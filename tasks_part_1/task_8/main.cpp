@@ -127,7 +127,7 @@ int main()
 
     std::cout << "print expression: ";
     std::getline(std::cin, expr);
-    expr_res = calc_expr(static_cast<const std::string_view>(expr));
+    expr_res = calc_expr(std::string_view(expr));
     std::cout << "Expr res: " << expr_res;
     return 0;
 }
