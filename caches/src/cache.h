@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -8,11 +9,6 @@ namespace caches
     template <typename T, typename KeyT = int>
     struct lru_cache
     {
-        size_t sz_;
-        std::list<T> cache_;
-        using ListIt = typename std::list<T>::iterator;
-        std::unordered_map<KeyT, ListIt> hash_;
-
         lru_cache(size_t sz) : sz_(sz) {}
 
         bool full() const { return (sz_ == cache_.size()); }
@@ -26,10 +22,13 @@ namespace caches
                 // page not found
                 if (full())
                 {
-                    hash_.erase(cache_.back().id);
+                    auto last = cache_.end();
+                    last--;
+                    hash_.erase(last->first);
                     cache_.pop_back();
                 }
-                cache_.push_front(slow_get_page(key));
+                std::pair<KeyT, T> new_page(key, slow_get_page(key));
+                cache_.push_front(new_page);
                 hash_[key] = cache_.begin();
                 return false;
             }
@@ -41,6 +40,12 @@ namespace caches
             }
             return true;
         }
+
+        size_t sz_;
+        using CacheT = typename std::list<std::pair<KeyT, T>>;
+        using ListIt = typename CacheT::iterator;
+        CacheT cache_;
+        std::unordered_map<KeyT, ListIt> hash_;
     };
 }
 
