@@ -187,7 +187,6 @@ namespace geom_prim
         }
     };
 
-
     // signed distance from point to plane for triangle intersection task
     float s_dist_point2plane(const point_t &p1, const plane_t &pl)
     {
@@ -212,6 +211,15 @@ namespace geom_prim
         if (((dist_arr[0] > 0) && (dist_arr[1] > 0) && (dist_arr[2] > 0)) || ((dist_arr[0] < 0) && (dist_arr[1] < 0) && (dist_arr[2] < 0)))
             return false;
         return true;
+    }
+
+    // checks that triangles in one plane
+    bool tr_in_one_pl_check(const std::vector<float> &dist_arr)
+    {
+        assert(dist_arr.size() == 3);
+        if (std::abs(dist_arr[0]) < flt_tolerance && std::abs(dist_arr[1]) < flt_tolerance && std::abs(dist_arr[2]) < flt_tolerance)
+            return true;
+        return false;
     }
 
     // swaps distances and points that v1 and v3 are on one side of plane
@@ -328,6 +336,12 @@ namespace geom_prim
 
         if (!simple_tr_int_check(d_arr_from_tr2))
             return false;
+
+        // TODO: case when triangles on one plane
+        if (tr_in_one_pl_check(d_arr_from_tr1) || tr_in_one_pl_check(d_arr_from_tr2))
+        {
+            throw std::runtime_error("currently case when triangles on one plane not supported. TODO.");
+        }
 
         // 3. if points of T1 lie on different sides of plane2
         // firstly find 2 out of 3 vertices of T1 that lie on the one side of plane2

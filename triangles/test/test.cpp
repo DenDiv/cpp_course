@@ -126,16 +126,30 @@ TEST(PrimitivesTest, triangle_inters_test_cases)
     ASSERT_TRUE(tr_inters(tr1, tr5));
 }
 
-TEST(PrimitivesTest, triangle_inters_error_cases)
+TEST(PrimitivesTest, triangle_inters_error_case1)
 {
-    // this cases must be fixed in feature
+    // This case must be fixed in feature.
+    // Point p and O are equal in projection func.
     point_t t1p1(0.0f, 0.0f, 0.0f), t1p2(1.0f, 0.0f, 1.0f), t1p3(0.0f, 1.0f, 1.0f);
     triangle_t tr1(t1p1, t1p2, t1p3);
 
     point_t t2p1(0.1f, 0.1f, 0.1f), t2p2(0.0f, 0.0f, 1.0f), t2p3(-1.0f, -1.0f, -1.0f);
     triangle_t tr2(t2p1, t2p2, t2p3);
 
-    ASSERT_TRUE(tr_inters(tr1, tr2));
+    ASSERT_TRUE(tr_inters(tr1, tr2)); 
+}
+
+TEST(PrimitivesTest, triangle_inters_error_case2)
+{
+    // This case must be fixed in feature.
+    // Triangles on the same plane.
+    point_t t1p1(0.0f, 0.0f, 0.0f), t1p2(0.0f, 1.0f, 0.0f), t1p3(1.0f, 0.0f, 0.0f);
+    triangle_t tr1(t1p1, t1p2, t1p3);
+
+    point_t t2p1(0.0f, 0.0f, 0.0f), t2p2(0.0f, -1.0f, 0.0f), t2p3(-1.0f, 0.0f, 0.0f);
+    triangle_t tr2(t2p1, t2p2, t2p3);
+
+    ASSERT_TRUE(tr_inters(tr1, tr2)); 
 }
 
 int main(int argc, char **argv)
