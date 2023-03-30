@@ -7,7 +7,7 @@
 #include <cmath>
 
 #include <primitives.h>
-#define eps 0.000001
+constexpr float eps = 0.000001;
 
 using namespace geom_prim;
 

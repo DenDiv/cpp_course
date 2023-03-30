@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-#define flt_tolerance 0.00001
+constexpr float flt_tolerance = 0.00001;
 
 namespace geom_prim
 {
@@ -21,9 +21,7 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct point_t : public obj
     {
-        float x = NAN, y = NAN, z = NAN;
-
-        point_t() {}
+        point_t() = default;
 
         point_t(float x_c, float y_c, float z_c) : x(x_c), y(y_c), z(z_c) {}
 
@@ -38,6 +36,10 @@ namespace geom_prim
                    (std::abs(y - rhs.y) < flt_tolerance) &&
                    (std::abs(z - rhs.z) < flt_tolerance);
         }
+
+        float x = NAN;
+        float y = NAN;
+        float z = NAN;
     };
 
     //----------------------------------------------------------------------------
@@ -47,9 +49,7 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct vec_t : public obj
     {
-        float x = NAN, y = NAN, z = NAN;
-
-        vec_t() {}
+        vec_t() = default;
 
         vec_t(const point_t &p1, const point_t &p2)
         {
@@ -74,6 +74,10 @@ namespace geom_prim
                    (std::abs(y - rhs.y) < flt_tolerance) &&
                    (std::abs(z - rhs.z) < flt_tolerance);
         }
+
+        float x = NAN;
+        float y = NAN;
+        float z = NAN;
     };
 
     // det_2d - computes determinant for 2d matrix
@@ -101,9 +105,7 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct plane_t : public obj
     {
-        float a = -1.0f, b = 1.0f, c = 0.0f, d = 0.0f;
-
-        plane_t() {}
+        plane_t() = default;
 
         plane_t(const point_t &p1, const point_t &p2, const point_t &p3)
         {
@@ -130,6 +132,11 @@ namespace geom_prim
                    (std::abs(c - rhs.c) < flt_tolerance) &&
                    (std::abs(d - rhs.d) < flt_tolerance);
         }
+
+        float a = -1.0f;
+        float b = 1.0f;
+        float c = 0.0f;
+        float d = 0.0f;
     };
 
     //----------------------------------------------------------------------------
@@ -139,9 +146,6 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct triangle_t : public obj
     {
-        point_t p1, p2, p3;
-        plane_t pl;
-
         triangle_t(const point_t &tr_p1, const point_t &tr_p2, const point_t &tr_p3)
         {
             p1 = tr_p1;
@@ -185,6 +189,9 @@ namespace geom_prim
                 return false;
             return true;
         }
+
+        point_t p1, p2, p3;
+        plane_t pl;
     };
 
     // signed distance from point to plane for triangle intersection task
@@ -197,7 +204,7 @@ namespace geom_prim
     std::vector<float> get_s_dist_for_arr(const std::vector<point_t> &points_vec, const plane_t &pl)
     {
         std::vector<float> res;
-        for (auto &p : points_vec)
+        for (const auto &p : points_vec)
         {
             res.push_back(s_dist_point2plane(p, pl));
         }
