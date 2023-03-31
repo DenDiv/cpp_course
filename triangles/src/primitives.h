@@ -21,8 +21,6 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct point_t : public obj
     {
-        point_t() = default;
-
         point_t(float x_c, float y_c, float z_c) : x(x_c), y(y_c), z(z_c) {}
 
         void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
@@ -49,8 +47,6 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct vec_t : public obj
     {
-        vec_t() = default;
-
         vec_t(const point_t &p1, const point_t &p2)
         {
             if (p1.equal(p2))
@@ -105,8 +101,6 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct plane_t : public obj
     {
-        plane_t() = default;
-
         plane_t(const point_t &p1, const point_t &p2, const point_t &p3)
         {
             if (p1.equal(p2) || p1.equal(p3) || p2.equal(p3))
@@ -146,13 +140,7 @@ namespace geom_prim
     //----------------------------------------------------------------------------
     struct triangle_t : public obj
     {
-        triangle_t(const point_t &tr_p1, const point_t &tr_p2, const point_t &tr_p3)
-        {
-            p1 = tr_p1;
-            p2 = tr_p2;
-            p3 = tr_p3;
-            pl = plane_t(p1, p2, p3);
-        };
+        triangle_t(const point_t &tr_p1, const point_t &tr_p2, const point_t &tr_p3) : p1(tr_p1), p2(tr_p2), p3(tr_p3), pl(plane_t(p1, p2, p3)) {}
 
         void print() const
         {
