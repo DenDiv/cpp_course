@@ -13,6 +13,7 @@ namespace geom_prim
     {
         virtual void print() const = 0;
         virtual bool valid() const = 0;
+        virtual ~obj() = default;
     };
     //----------------------------------------------------------------------------
     //
@@ -23,9 +24,9 @@ namespace geom_prim
     {
         point_t(float x_c, float y_c, float z_c) : x(x_c), y(y_c), z(z_c) {}
 
-        void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
+        void print() const override { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
 
-        bool valid() const { return !(x != x || y != y || z != z); }
+        bool valid() const override { return !(x != x || y != y || z != z); }
 
         bool equal(const point_t &rhs) const
         {
@@ -59,9 +60,9 @@ namespace geom_prim
 
         vec_t(float x_c, float y_c, float z_c) : x(x_c), y(y_c), z(z_c) {}
 
-        void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
+        void print() const override { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
 
-        bool valid() const { return !(x != x || y != y || z != z); }
+        bool valid() const override { return !(x != x || y != y || z != z); }
 
         bool equal(const vec_t &rhs) const
         {
@@ -114,9 +115,9 @@ namespace geom_prim
             d = -1 * (a * p1.x + b * p1.y + c * p1.z);
         }
 
-        void print() const { std::cout << "(" << a << " ; " << b << " ; " << c << " ; " << d << ")"; }
+        void print() const override { std::cout << "(" << a << " ; " << b << " ; " << c << " ; " << d << ")"; }
 
-        bool valid() const { return !(a != a || b != b || c != c || d != d); }
+        bool valid() const override { return !(a != a || b != b || c != c || d != d); }
 
         bool equal(const plane_t &rhs) const
         {
@@ -142,7 +143,7 @@ namespace geom_prim
     {
         triangle_t(const point_t &tr_p1, const point_t &tr_p2, const point_t &tr_p3) : p1(tr_p1), p2(tr_p2), p3(tr_p3), pl(plane_t(p1, p2, p3)) {}
 
-        void print() const
+        void print() const override
         {
             std::cout << "p1: ";
             p1.print();
@@ -161,7 +162,7 @@ namespace geom_prim
             std::cout << std::endl;
         }
 
-        bool valid() const
+        bool valid() const override
         {
             return pl.valid();
         }
