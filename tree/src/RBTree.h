@@ -223,8 +223,6 @@ private:
 public:
     RBTree() : root(nullptr), val_count(0){};
 
-    ~RBTree() { destroy_tree(root); }
-
     RBTree(const RBTree& rhs) : val_count(rhs.val_count)
     {
         root = new Node{rhs.root->data, nullptr, nullptr, nullptr, rhs.root->isRed, rhs.root->min_stat};
@@ -242,6 +240,8 @@ public:
         rec_copy(rhs.root, root);
         return *this;
     }
+
+    ~RBTree() { destroy_tree(root); }
 
     void insert(int key)
     {
