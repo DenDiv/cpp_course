@@ -302,6 +302,43 @@ TEST(FuncTests, check_min_stat)
     ASSERT_TRUE(tree_map == real_map);
 }
 
+bool compare_trees(NodePtr node1, NodePtr node2)
+{
+    if (!node1 && !node2)
+        return true;
+
+    if (!node1 || !node2)
+        return false;
+
+    if (node1->data == node2->data && node1->isRed == node2->isRed && node1->min_stat == node2->min_stat)
+        return compare_trees(node1->left, node2->left) && compare_trees(node1->right, node2->right);
+    else
+        return false;
+    
+}
+
+TEST(FuncTests, copy_constr)
+{
+    std::vector<int> keys{1, 5, 2, 4, -2, 24, -3, -2, 0, 5, 8, 3, 15, 12, 13, 125, -12, 24};
+    RBTree tree{};
+    for (auto i : keys)
+        tree.insert(i);
+
+    RBTree copy_tree{tree};
+    ASSERT_TRUE(compare_trees(tree.root, copy_tree.root));
+}
+
+TEST(FuncTests, ass_operator)
+{
+    std::vector<int> keys{1, 5, 2, 4, -2, 24, -3, -2, 0, 5, 8, 3, 15, 12, 13, 125, -12, 24};
+    RBTree tree{};
+    for (auto i : keys)
+        tree.insert(i);
+
+    RBTree new_tree = tree;
+    ASSERT_TRUE(compare_trees(tree.root, new_tree.root));
+}
+
 TEST(End2EndTests, CheckAns)
 {
     // check "minimal stats" and "less than" tasks
@@ -365,5 +402,6 @@ TEST(End2EndTests, CheckAns)
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
+    ::testing::GTEST_FLAG(filter) = "FuncTests.ass_operator";
     return RUN_ALL_TESTS();
 }

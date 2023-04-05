@@ -190,11 +190,58 @@ private:
             return get_min_stat_rec(node->right, min_stat);
     }
 
+    void destroy_tree(NodePtr node)
+    {
+        if (node)
+        {
+            destroy_tree(node->left);
+            destroy_tree(node->right);
+            delete node;
+        }
+    }
+
+    void rec_copy(NodePtr src, NodePtr dst)
+    {
+        if (src)
+        {
+            if (src->left)
+            {
+                dst->left = new Node{src->left->data, dst, nullptr, nullptr, src->left->isRed, src->left->min_stat};
+                rec_copy(src->left, dst->left);
+            }
+            if (src->right)
+            {
+                dst->right = new Node{src->right->data, dst, nullptr, nullptr, src->right->isRed, src->right->min_stat};
+                rec_copy(src->right, dst->right);
+            }
+        }
+    }
+
     NodePtr root;
     size_t val_count;
 
 public:
     RBTree() : root(nullptr), val_count(0){};
+
+    ~RBTree() { destroy_tree(root); }
+
+    RBTree(const RBTree& rhs) : val_count(rhs.val_count)
+    {
+        root = new Node{rhs.root->data, nullptr, nullptr, nullptr, rhs.root->isRed, rhs.root->min_stat};
+        rec_copy(rhs.root, root);
+    }
+
+    RBTree& operator=(const RBTree& rhs)
+    {
+        if (this == &rhs)
+            return *this;
+
+        val_count = rhs.val_count;
+        destroy_tree(root);
+        root = new Node{rhs.root->data, nullptr, nullptr, nullptr, rhs.root->isRed, rhs.root->min_stat};
+        rec_copy(rhs.root, root);
+        return *this;
+    }
 
     void insert(int key)
     {
