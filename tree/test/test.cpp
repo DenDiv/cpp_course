@@ -402,6 +402,5 @@ TEST(End2EndTests, CheckAns)
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    ::testing::GTEST_FLAG(filter) = "FuncTests.ass_operator";
     return RUN_ALL_TESTS();
 }
