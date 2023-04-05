@@ -13,6 +13,7 @@ struct Node
     Node* left;
     Node* right;
     bool isRed;
+    int min_stat;  // keep sorting position
 };
 
 using NodePtr = Node*;
@@ -169,6 +170,26 @@ private:
         }
     }
 
+    void update_stats(NodePtr node)
+    {
+        if (node)
+        {
+            node->min_stat++;
+            update_stats(node->left);
+            update_stats(node->right);
+        }
+    }
+
+    int get_min_stat_rec(NodePtr node, int min_stat)
+    {
+        if (min_stat == node->min_stat)
+            return node->data;
+        else if (min_stat < node->min_stat)
+            return get_min_stat_rec(node->left, min_stat);
+        else
+            return get_min_stat_rec(node->right, min_stat);
+    }
+
     NodePtr root;
     size_t val_count;
 
@@ -177,7 +198,7 @@ public:
 
     void insert(int key)
     {
-        NodePtr new_node = new Node{key, nullptr, nullptr, nullptr, true};
+        NodePtr new_node = new Node{key, nullptr, nullptr, nullptr, true, 1};
         val_count++;
 
         if (!root)
@@ -196,19 +217,30 @@ public:
             if (p->data < key)
                 p = p->right;
             else if (p->data > key)
+            {
+                p->min_stat++;
+                if (p->right)
+                    update_stats(p->right);
                 p = p->left;
+            }
             else
-                {
-                    val_count--;
-                    return;
-                }
+            {
+                val_count--;
+                return;
+            }
         }
 
         new_node->parent = q;
         if (q->data < key)
+        {
+            new_node->min_stat = q->min_stat + 1;
             q->right = new_node;
+        }
         else
+        {
+            new_node->min_stat = q->min_stat - 1;
             q->left = new_node;
+        }
 
         fix_insertion(new_node);
     }
@@ -216,4 +248,40 @@ public:
     int get_height() { return get_height_rec(root, 0); }
 
     void print() { print_rec(root); }
+
+    // returns min stat data
+    int get_min_stat(int min_stat)
+    {
+        if (min_stat > val_count || min_stat <= 0)
+            throw std::runtime_error("Invalid min_stat: " + min_stat);
+
+        return get_min_stat_rec(root, min_stat);
+    }
+
+    // returns count of less values than input key
+    int get_less_than(int key)
+    {
+        NodePtr p = root;
+        NodePtr q = nullptr;
+
+        while (p)
+        {
+            q = p;
+            if (p->data < key)
+                p = p->right;
+            else if (p->data > key)
+            {
+                p = p->left;
+            }
+            else
+            {
+                return p->min_stat - 1;
+            }
+        }
+
+        if (q->data < key)
+            return q->min_stat;
+        else
+            return q->min_stat - 1;
+    }
 };
