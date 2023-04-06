@@ -12,7 +12,7 @@ struct Node
     Node* parent;
     Node* left;
     Node* right;
-    bool isRed;
+    bool is_red;
     int min_stat;  // keep sorting position
 };
 
@@ -33,13 +33,17 @@ private:
         if (p_node)
         {
             if (node->data < p_node->data)
+            {
                 p_node->left = ch_node_r;
+            }
             else
+            {
                 p_node->right = ch_node_r;
+            }
         }
         else
         {
-            root = ch_node_r;
+            root_ = ch_node_r;
         }
 
         ch_node_r->left = node;
@@ -49,7 +53,9 @@ private:
         node->parent = ch_node_r;
 
         if (ch_node_r_l)
+        {
             ch_node_r_l->parent = node;
+        }
     }
 
     void rightRotate(NodePtr node)
@@ -63,13 +69,17 @@ private:
         if (p_node)
         {
             if (node->data < p_node->data)
+            {
                 p_node->left = ch_node_l;
+            }
             else
+            {
                 p_node->right = ch_node_l;
+            }
         }
         else
         {
-            root = ch_node_l;
+            root_ = ch_node_l;
         }
 
 
@@ -80,7 +90,9 @@ private:
         node->parent = ch_node_l;
 
         if (ch_node_l_r)
+        {
             ch_node_l_r->parent = node;
+        }
     }
 
     void fix_insertion(NodePtr new_node)
@@ -88,7 +100,7 @@ private:
         NodePtr p = nullptr;
         NodePtr grandp = nullptr;
         NodePtr uncle = nullptr;
-        while (new_node->parent->isRed)
+        while (new_node->parent->is_red)
         {
             p = new_node->parent;
             grandp = p->parent;
@@ -98,11 +110,11 @@ private:
                 uncle = grandp->right;
 
                 // if "uncle" exists and red
-                if ((uncle) && (uncle->isRed))
+                if ((uncle) && (uncle->is_red))
                 {
-                    p->isRed = false;
-                    uncle->isRed = false;
-                    grandp->isRed = true;
+                    p->is_red = false;
+                    uncle->is_red = false;
+                    grandp->is_red = true;
                     new_node = grandp;
                 }
                 else
@@ -115,8 +127,8 @@ private:
                         p = new_node->parent;
                         grandp = p->parent;
                     }
-                    p->isRed = false;
-                    grandp->isRed = true;
+                    p->is_red = false;
+                    grandp->is_red = true;
                     rightRotate(grandp);
                 }
             }
@@ -124,11 +136,11 @@ private:
             {
                 uncle = grandp->left;
                 // if "uncle" exists and red
-                if ((uncle) && (uncle->isRed))
+                if ((uncle) && (uncle->is_red))
                 {
-                    p->isRed = false;
-                    uncle->isRed = false;
-                    grandp->isRed = true;
+                    p->is_red = false;
+                    uncle->is_red = false;
+                    grandp->is_red = true;
                     new_node = grandp;
                 }
                 else
@@ -141,23 +153,29 @@ private:
                         p = new_node->parent;
                         grandp = p->parent;
                     }
-                    p->isRed = false;
-                    grandp->isRed = true;
+                    p->is_red = false;
+                    grandp->is_red = true;
                     leftRotate(grandp);
                 }
             }
-            if (new_node == root)
+            if (new_node == root_)
+            {
                 break;
+            }
         }
-        root->isRed = false;
+        root_->is_red = false;
     }
 
     int get_height_rec(NodePtr node, int height)
     {
         if (node)
+        {
             return 1 + std::max(get_height_rec(node->left, height), get_height_rec(node->right, height));
+        }
         else
+        {
             return height;
+        }
     }
 
     void print_rec(NodePtr node)
@@ -183,11 +201,17 @@ private:
     int get_min_stat_rec(NodePtr node, int min_stat)
     {
         if (min_stat == node->min_stat)
+        {
             return node->data;
+        }
         else if (min_stat < node->min_stat)
+        {
             return get_min_stat_rec(node->left, min_stat);
+        }
         else
+        {
             return get_min_stat_rec(node->right, min_stat);
+        }
     }
 
     void destroy_tree(NodePtr node)
@@ -206,63 +230,67 @@ private:
         {
             if (src->left)
             {
-                dst->left = new Node{src->left->data, dst, nullptr, nullptr, src->left->isRed, src->left->min_stat};
+                dst->left = new Node{src->left->data, dst, nullptr, nullptr, src->left->is_red, src->left->min_stat};
                 rec_copy(src->left, dst->left);
             }
             if (src->right)
             {
-                dst->right = new Node{src->right->data, dst, nullptr, nullptr, src->right->isRed, src->right->min_stat};
+                dst->right = new Node{src->right->data, dst, nullptr, nullptr, src->right->is_red, src->right->min_stat};
                 rec_copy(src->right, dst->right);
             }
         }
     }
 
-    NodePtr root;
-    size_t val_count;
+    NodePtr root_;
+    size_t val_count_;
 
 public:
-    RBTree() : root(nullptr), val_count(0){};
+    RBTree() : root_(nullptr), val_count_(0){};
 
-    RBTree(const RBTree& rhs) : val_count(rhs.val_count)
+    RBTree(const RBTree& rhs) : val_count_(rhs.val_count_)
     {
-        root = new Node{rhs.root->data, nullptr, nullptr, nullptr, rhs.root->isRed, rhs.root->min_stat};
-        rec_copy(rhs.root, root);
+        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
+        rec_copy(rhs.root_, root_);
     }
 
     RBTree& operator=(const RBTree& rhs)
     {
         if (this == &rhs)
+        {
             return *this;
+        }
 
-        val_count = rhs.val_count;
-        destroy_tree(root);
-        root = new Node{rhs.root->data, nullptr, nullptr, nullptr, rhs.root->isRed, rhs.root->min_stat};
-        rec_copy(rhs.root, root);
+        val_count_ = rhs.val_count_;
+        destroy_tree(root_);
+        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
+        rec_copy(rhs.root_, root_);
         return *this;
     }
 
-    ~RBTree() { destroy_tree(root); }
+    ~RBTree() { destroy_tree(root_); }
 
     void insert(int key)
     {
         NodePtr new_node = new Node{key, nullptr, nullptr, nullptr, true, 1};
-        val_count++;
+        val_count_++;
 
-        if (!root)
+        if (!root_)
         {
-            new_node->isRed = false;
-            root = new_node;
+            new_node->is_red = false;
+            root_ = new_node;
             return;
         }
 
-        NodePtr p = root;
+        NodePtr p = root_;
         NodePtr q = nullptr;
 
         while (p)
         {
             q = p;
             if (p->data < key)
+            {
                 p = p->right;
+            }
             else if (p->data > key)
             {
                 p->min_stat++;
@@ -272,7 +300,7 @@ public:
             }
             else
             {
-                val_count--;
+                val_count_--;
                 return;
             }
         }
@@ -292,30 +320,33 @@ public:
         fix_insertion(new_node);
     }
 
-    int get_height() { return get_height_rec(root, 0); }
+    int get_height() { return get_height_rec(root_, 0); }
 
-    void print() { print_rec(root); }
+    void print() { print_rec(root_); }
 
     // returns min stat data
     int get_min_stat(int min_stat)
     {
-        if (min_stat > val_count || min_stat <= 0)
+        if (min_stat > val_count_ || min_stat <= 0)
+        {
             throw std::runtime_error("Invalid min_stat: " + min_stat);
-
-        return get_min_stat_rec(root, min_stat);
+        }
+        return get_min_stat_rec(root_, min_stat);
     }
 
     // returns count of less values than input key
     int get_less_than(int key)
     {
-        NodePtr p = root;
+        NodePtr p = root_;
         NodePtr q = nullptr;
 
         while (p)
         {
             q = p;
             if (p->data < key)
+            {
                 p = p->right;
+            }
             else if (p->data > key)
             {
                 p = p->left;
@@ -327,8 +358,12 @@ public:
         }
 
         if (q->data < key)
+        {
             return q->min_stat;
+        }
         else
+        {
             return q->min_stat - 1;
+        }
     }
 };
