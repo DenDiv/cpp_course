@@ -5,3 +5,5 @@
 *.exe
 *.o
 *.dll
+
+tasks_part_1/*/.vscode/*
