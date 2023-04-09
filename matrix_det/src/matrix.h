@@ -44,6 +44,24 @@ private:
         delete[] new_subbuf;
         return res;
     }
+    
+    struct ProxyMatrix
+    {
+        T* matrix_buff_ref;
+        int matrix_ncols;
+
+        T& operator[](int n)
+        {
+            assert(n < matrix_ncols);
+            return matrix_buff_ref[n];
+        }
+
+        const T& operator[](int n) const
+        {
+            assert(n < matrix_ncols);
+            return matrix_buff_ref[n];
+        }
+    };
 
     T* matrix_buff_;
     int nrows_;
@@ -106,6 +124,18 @@ public:
         ncols_ = rhs.ncols_;
         std::swap(matrix_buff_, rhs.matrix_buff_);
         return *this;
+    }
+
+    ProxyMatrix operator[](int n)
+    {
+        assert(n < nrows_);
+        return ProxyMatrix{matrix_buff_ + n * ncols_, ncols_};
+    }
+
+    const ProxyMatrix operator[](int n) const
+    {
+        assert(n < nrows_);
+        return ProxyMatrix{matrix_buff_ + n * ncols_, ncols_};
     }
 
     template <typename It>

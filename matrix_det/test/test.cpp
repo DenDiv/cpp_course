@@ -9,7 +9,7 @@
 #include <Config.h>
 #include <matrix.h>
 
-constexpr float eps = 0.0001;
+constexpr float eps = 0.0001f;
 
 TEST(FuncTests, MatrixConstr)
 {
@@ -75,6 +75,18 @@ TEST(FuncTests, determinant)
     float det_m2 = m2.det();
     ASSERT_TRUE(std::abs(det_m2 - 21.625) < eps);
 }
+
+TEST(FuncTests, operator_brackets)
+{
+    int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
+    const Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    ASSERT_TRUE(m1[2][2] == 2);
+
+    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    m2[2][2] = 228;
+    ASSERT_TRUE(m2[2][2] == 228);
+}
+
 
 TEST(End2EndTests, det_test)
 {
