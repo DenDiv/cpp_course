@@ -44,7 +44,7 @@ private:
         delete[] new_subbuf;
         return res;
     }
-    
+
     struct ProxyMatrix
     {
         T* matrix_buff_ref;
@@ -138,6 +138,24 @@ public:
         return ProxyMatrix{matrix_buff_ + n * ncols_, ncols_};
     }
 
+    Matrix& operator+=(const Matrix& rhs)
+    {
+        for (int i = 0, i_end = nrows_ * ncols_; i < i_end; ++i)
+        {
+            matrix_buff_[i] += rhs.matrix_buff_[i];
+        }
+        return *this;
+    }
+
+    Matrix& operator+=(T rhs)
+    {
+        for (int i = 0, i_end = nrows_ * ncols_; i < i_end; ++i)
+        {
+            matrix_buff_[i] += rhs;
+        }
+        return *this;
+    }
+
     template <typename It>
     static Matrix create(int nrows, int ncols, It start, It fin)
     {
@@ -226,3 +244,33 @@ public:
         return res;
     }
 };
+
+template <typename T>
+Matrix<T> operator+(const Matrix<T>& lhs, const Matrix<T>& rhs)
+{
+    Matrix<T> tmp(lhs);
+    tmp += rhs;
+    return tmp;
+}
+
+template <typename T>
+Matrix<T> operator+(const T lhs, const Matrix<T>& rhs)
+{
+    Matrix<T> tmp(rhs);
+    tmp += lhs;
+    return tmp;
+}
+
+template <typename T>
+Matrix<T> operator+(const Matrix<T>& lhs, const T rhs)
+{
+    Matrix<T> tmp(lhs);
+    tmp += rhs;
+    return tmp;
+}
+
+template <typename T>
+bool operator==(const Matrix<T>& lhs, const Matrix<T>& rhs)
+{
+    return lhs.equal(rhs);
+}

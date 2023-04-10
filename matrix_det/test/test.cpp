@@ -87,6 +87,37 @@ TEST(FuncTests, operator_brackets)
     ASSERT_TRUE(m2[2][2] == 228);
 }
 
+TEST(FuncTests, operator_plus_ass)
+{
+    int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
+    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    m1 += m2;
+    ASSERT_TRUE(m1[0][2] == 10);
+    m1 += 5;
+    ASSERT_TRUE(m1[0][2] == 15);
+}
+
+TEST(FuncTests, operator_bin_plus)
+{
+    int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
+    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m3 = m1 + m2;
+    ASSERT_TRUE(m3[0][2] == 10);
+    Matrix<int> m4 = 5 + m3;
+    ASSERT_TRUE(m4[0][2] == 15);
+    Matrix<int> m5 = m4 + 5;
+    ASSERT_TRUE(m5[0][2] == 20);
+}
+
+TEST(FuncTests, operator_equal)
+{
+    int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
+    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    ASSERT_TRUE(m1 == m2);
+}
 
 TEST(End2EndTests, det_test)
 {
