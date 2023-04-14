@@ -16,11 +16,157 @@ struct Node
     int min_stat;  // keep sorting position
 };
 
-using NodePtr = Node*;
 
 // Red-Black tree
 struct RBTree
 {
+    using NodePtr = Node*;
+
+public:
+    RBTree() : root_(nullptr), val_count_(0){};
+
+    RBTree(const RBTree& rhs) : val_count_(rhs.val_count_)
+    {
+        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
+        rec_copy(rhs.root_, root_);
+    }
+
+    RBTree& operator=(const RBTree& rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        val_count_ = rhs.val_count_;
+        destroy_tree(root_);
+        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
+        rec_copy(rhs.root_, root_);
+        return *this;
+    }
+
+    ~RBTree() { destroy_tree(root_); }
+
+public:
+    void insert(int key)
+    {
+        NodePtr new_node = new Node{key, nullptr, nullptr, nullptr, true, 1};
+        val_count_++;
+
+        if (!root_)
+        {
+            new_node->is_red = false;
+            root_ = new_node;
+            return;
+        }
+
+        NodePtr p = root_;
+        NodePtr q = nullptr;
+
+        while (p)
+        {
+            q = p;
+            if (p->data < key)
+            {
+                p = p->right;
+            }
+            else if (p->data > key)
+            {
+                p->min_stat++;
+                if (p->right)
+                    update_stats(p->right);
+                p = p->left;
+            }
+            else
+            {
+                val_count_--;
+                return;
+            }
+        }
+
+        new_node->parent = q;
+        if (q->data < key)
+        {
+            new_node->min_stat = q->min_stat + 1;
+            q->right = new_node;
+        }
+        else
+        {
+            new_node->min_stat = q->min_stat - 1;
+            q->left = new_node;
+        }
+
+        fix_insertion(new_node);
+    }
+
+    int get_height() { return get_height_rec(root_, 0); }
+
+    void print() { print_rec(root_); }
+
+    // returns min stat data
+    int get_min_stat(int min_stat)
+    {
+        if (min_stat > val_count_ || min_stat <= 0)
+        {
+            throw std::runtime_error("Invalid min_stat: " + min_stat);
+        }
+        return get_min_stat_rec(root_, min_stat);
+    }
+
+    // returns count of less values than input key
+    int get_less_than(int key)
+    {
+        NodePtr p = root_;
+        NodePtr q = nullptr;
+
+        while (p)
+        {
+            q = p;
+            if (p->data < key)
+            {
+                p = p->right;
+            }
+            else if (p->data > key)
+            {
+                p = p->left;
+            }
+            else
+            {
+                return p->min_stat - 1;
+            }
+        }
+
+        if (q->data < key)
+        {
+            return q->min_stat;
+        }
+        else
+        {
+            return q->min_stat - 1;
+        }
+    }
+
+public:
+    void set_root(NodePtr root)
+    {
+        root_ = root;
+    }
+
+    NodePtr get_root()
+    {
+        return root_;
+    }
+
+    void check_leftRotate(NodePtr node)
+    {
+        leftRotate(node);
+    }
+
+    void check_rightRotate(NodePtr node)
+    {
+        rightRotate(node);
+    }
+
 private:
     void leftRotate(NodePtr node)
     {
@@ -243,127 +389,4 @@ private:
 
     NodePtr root_;
     size_t val_count_;
-
-public:
-    RBTree() : root_(nullptr), val_count_(0){};
-
-    RBTree(const RBTree& rhs) : val_count_(rhs.val_count_)
-    {
-        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
-        rec_copy(rhs.root_, root_);
-    }
-
-    RBTree& operator=(const RBTree& rhs)
-    {
-        if (this == &rhs)
-        {
-            return *this;
-        }
-
-        val_count_ = rhs.val_count_;
-        destroy_tree(root_);
-        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
-        rec_copy(rhs.root_, root_);
-        return *this;
-    }
-
-    ~RBTree() { destroy_tree(root_); }
-
-    void insert(int key)
-    {
-        NodePtr new_node = new Node{key, nullptr, nullptr, nullptr, true, 1};
-        val_count_++;
-
-        if (!root_)
-        {
-            new_node->is_red = false;
-            root_ = new_node;
-            return;
-        }
-
-        NodePtr p = root_;
-        NodePtr q = nullptr;
-
-        while (p)
-        {
-            q = p;
-            if (p->data < key)
-            {
-                p = p->right;
-            }
-            else if (p->data > key)
-            {
-                p->min_stat++;
-                if (p->right)
-                    update_stats(p->right);
-                p = p->left;
-            }
-            else
-            {
-                val_count_--;
-                return;
-            }
-        }
-
-        new_node->parent = q;
-        if (q->data < key)
-        {
-            new_node->min_stat = q->min_stat + 1;
-            q->right = new_node;
-        }
-        else
-        {
-            new_node->min_stat = q->min_stat - 1;
-            q->left = new_node;
-        }
-
-        fix_insertion(new_node);
-    }
-
-    int get_height() { return get_height_rec(root_, 0); }
-
-    void print() { print_rec(root_); }
-
-    // returns min stat data
-    int get_min_stat(int min_stat)
-    {
-        if (min_stat > val_count_ || min_stat <= 0)
-        {
-            throw std::runtime_error("Invalid min_stat: " + min_stat);
-        }
-        return get_min_stat_rec(root_, min_stat);
-    }
-
-    // returns count of less values than input key
-    int get_less_than(int key)
-    {
-        NodePtr p = root_;
-        NodePtr q = nullptr;
-
-        while (p)
-        {
-            q = p;
-            if (p->data < key)
-            {
-                p = p->right;
-            }
-            else if (p->data > key)
-            {
-                p = p->left;
-            }
-            else
-            {
-                return p->min_stat - 1;
-            }
-        }
-
-        if (q->data < key)
-        {
-            return q->min_stat;
-        }
-        else
-        {
-            return q->min_stat - 1;
-        }
-    }
 };

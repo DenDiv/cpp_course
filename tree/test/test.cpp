@@ -10,9 +10,9 @@
 
 
 #include <Config.h>
-#define private public
 #include <RBTree.h>
 
+using NodePtr = Node*;
 
 TEST(FuncTests, LeftRotate)
 {
@@ -29,10 +29,10 @@ TEST(FuncTests, LeftRotate)
     N3->right = N5;
 
     RBTree tree{};
-    tree.root_ = N1;
-    tree.leftRotate(N1);
+    NodePtr root = N1;
+    tree.check_leftRotate(root);
 
-    ASSERT_TRUE(tree.root_ == N3);
+    ASSERT_TRUE(tree.get_root() == N3);
     ASSERT_TRUE(N3->parent == nullptr);
     ASSERT_TRUE(N3->left == N1);
     ASSERT_TRUE(N3->right == N5);
@@ -69,10 +69,10 @@ TEST(FuncTests, RightRotate)
     N2->right = N5;
 
     RBTree tree{};
-    tree.root_ = N1;
-    tree.rightRotate(N1);
+    NodePtr root = N1;
+    tree.check_rightRotate(root);
 
-    ASSERT_TRUE(tree.root_ == N2);
+    ASSERT_TRUE(tree.get_root() == N2);
     ASSERT_TRUE(N2->parent == nullptr);
     ASSERT_TRUE(N2->left == N4);
     ASSERT_TRUE(N2->right == N1);
@@ -94,6 +94,7 @@ TEST(FuncTests, RightRotate)
     ASSERT_TRUE(N3->right == nullptr);
 }
 
+
 TEST(FuncTests, RBCond_1_simple)
 {
     // root and leafs are black
@@ -102,7 +103,7 @@ TEST(FuncTests, RBCond_1_simple)
     for (auto i : keys)
         tree.insert(i);
 
-    ASSERT_TRUE(!tree.root_->is_red);
+    ASSERT_TRUE(!tree.get_root()->is_red);
 }
 
 bool check_color_rec(NodePtr node)
@@ -129,7 +130,7 @@ TEST(FuncTests, RBCond_2_simple)
     for (auto i : keys)
     {
         tree.insert(i);
-        ASSERT_TRUE(check_color_rec(tree.root_));
+        ASSERT_TRUE(check_color_rec(tree.get_root()));
     }
 }
 
@@ -158,7 +159,7 @@ TEST(FuncTests, RBCond_3_simple)
         tree.insert(i);
 
     std::vector<int> lens;
-    check_black_len(tree.root_, 0, lens);
+    check_black_len(tree.get_root(), 0, lens);
     int val = lens[0];
     for (auto i : lens)
         ASSERT_TRUE(val == i);
@@ -195,7 +196,7 @@ TEST(FuncTests, RBCond_1_total)
             else
                 throw std::runtime_error("unknown operation: " + operation);
         }
-        ASSERT_TRUE(!tree.root_->is_red);
+        ASSERT_TRUE(!tree.get_root()->is_red);
     }
 }
 
@@ -230,7 +231,7 @@ TEST(FuncTests, RBCond_2_total)
             else
                 throw std::runtime_error("unknown operation: " + operation);
         }
-        ASSERT_TRUE(check_color_rec(tree.root_));
+        ASSERT_TRUE(check_color_rec(tree.get_root()));
     }
 }
 
@@ -267,7 +268,7 @@ TEST(FuncTests, RBCond_3_total)
         }
 
         std::vector<int> lens;
-        check_black_len(tree.root_, 0, lens);
+        check_black_len(tree.get_root(), 0, lens);
         int val = lens[0];
         for (auto i : lens)
             ASSERT_TRUE(val == i);
@@ -298,7 +299,7 @@ TEST(FuncTests, check_min_stat)
     for (int idx = 0; idx < keys.size(); ++idx)
         real_map[idx + 1] = keys[idx];
 
-    check_stats_rer(tree.root_, tree_map);
+    check_stats_rer(tree.get_root(), tree_map);
     ASSERT_TRUE(tree_map == real_map);
 }
 
@@ -325,7 +326,7 @@ TEST(FuncTests, copy_constr)
         tree.insert(i);
 
     RBTree copy_tree{tree};
-    ASSERT_TRUE(compare_trees(tree.root_, copy_tree.root_));
+    ASSERT_TRUE(compare_trees(tree.get_root(), copy_tree.get_root()));
 }
 
 TEST(FuncTests, ass_operator)
@@ -336,7 +337,7 @@ TEST(FuncTests, ass_operator)
         tree.insert(i);
 
     RBTree new_tree = tree;
-    ASSERT_TRUE(compare_trees(tree.root_, new_tree.root_));
+    ASSERT_TRUE(compare_trees(tree.get_root(), new_tree.get_root()));
 }
 
 TEST(End2EndTests, CheckAns)
