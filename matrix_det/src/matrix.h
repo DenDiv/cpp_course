@@ -5,46 +5,6 @@ template <typename T>
 class Matrix
 {
 private:
-    T det_rec(const T* matrix_subbuf, const int dim) const
-    {
-        if (dim == 3)
-        {
-            T val1 = matrix_subbuf[0] * (matrix_subbuf[4] * matrix_subbuf[8] - matrix_subbuf[5] * matrix_subbuf[7]);
-            T val2 = -matrix_subbuf[1] * (matrix_subbuf[3] * matrix_subbuf[8] - matrix_subbuf[5] * matrix_subbuf[6]);
-            T val3 = matrix_subbuf[2] * (matrix_subbuf[3] * matrix_subbuf[7] - matrix_subbuf[4] * matrix_subbuf[6]);
-            return val1 + val2 + val3;
-        }
-
-        T res = T{};
-        int submatr_dim = dim - 1;
-        T* new_subbuf = new T[submatr_dim * submatr_dim];
-
-        for (int col_idx = 0; col_idx < dim; ++col_idx)
-        {
-            int new_idx = 0;
-            int idx = dim;
-            int next_skip_idx = col_idx + dim;
-
-            // copy submatrix
-            while (idx != dim * dim)
-            {
-                if (idx != next_skip_idx)
-                {
-                    new_subbuf[new_idx] = matrix_subbuf[idx];
-                    new_idx++;
-                }
-                else
-                {
-                    next_skip_idx = next_skip_idx + dim;
-                }
-                idx++;
-            }
-            res = res + matrix_subbuf[col_idx] * static_cast<T>(std::pow(-1, col_idx)) * det_rec(new_subbuf, submatr_dim);
-        }
-        delete[] new_subbuf;
-        return res;
-    }
-
     struct ProxyMatrix
     {
         T* matrix_buff_ref;
@@ -63,10 +23,6 @@ private:
         }
     };
 
-    T* matrix_buff_;
-    int nrows_;
-    int ncols_;
-
 public:
     Matrix() = default;
 
@@ -76,6 +32,13 @@ public:
     {
         matrix_buff_ = new T[nrows_ * ncols_];
         std::fill(matrix_buff_, matrix_buff_ + nrows_ * ncols_, val);
+    }
+
+    template <typename It>
+    Matrix(int nrows, int ncols, It first, It last) : nrows_(nrows), ncols_(ncols)
+    {
+        matrix_buff_ = new T[nrows_ * ncols_];
+        std::copy(first, last, matrix_buff_);
     }
 
     // copy constr
@@ -106,7 +69,7 @@ public:
 
         nrows_ = rhs.nrows_;
         ncols_ = rhs.ncols_;
-        delete matrix_buff_;
+        delete[] matrix_buff_;
         matrix_buff_ = new T[nrows_ * ncols_];
         std::copy(rhs.matrix_buff_, rhs.matrix_buff_ + nrows_ * ncols_, matrix_buff_);
         return *this;
@@ -156,17 +119,7 @@ public:
         return *this;
     }
 
-    template <typename It>
-    static Matrix create(int nrows, int ncols, It start, It fin)
-    {
-        Matrix m{};
-        m.nrows_ = nrows;
-        m.ncols_ = ncols;
-        m.matrix_buff_ = new T[m.nrows_ * m.ncols_];
-        std::copy(start, fin, m.matrix_buff_);
-        return m;
-    }
-
+public:
     void print() const
     {
         for (int i = 0; i < nrows_; ++i)
@@ -186,6 +139,11 @@ public:
 
     bool equal(const Matrix& other) const
     {
+        if (&other == this)
+        {
+            return true;
+        }
+
         if (nrows_ != other.nrows_ || ncols_ != other.ncols_)
         {
             return false;
@@ -243,6 +201,51 @@ public:
         }
         return res;
     }
+
+private:
+    T det_rec(const T* matrix_subbuf, const int dim) const
+    {
+        if (dim == 3)
+        {
+            T val1 = matrix_subbuf[0] * (matrix_subbuf[4] * matrix_subbuf[8] - matrix_subbuf[5] * matrix_subbuf[7]);
+            T val2 = -matrix_subbuf[1] * (matrix_subbuf[3] * matrix_subbuf[8] - matrix_subbuf[5] * matrix_subbuf[6]);
+            T val3 = matrix_subbuf[2] * (matrix_subbuf[3] * matrix_subbuf[7] - matrix_subbuf[4] * matrix_subbuf[6]);
+            return val1 + val2 + val3;
+        }
+
+        T res = T{};
+        int submatr_dim = dim - 1;
+        T* new_subbuf = new T[submatr_dim * submatr_dim];
+
+        for (int col_idx = 0; col_idx < dim; ++col_idx)
+        {
+            int new_idx = 0;
+            int idx = dim;
+            int next_skip_idx = col_idx + dim;
+
+            // copy submatrix
+            while (idx != dim * dim)
+            {
+                if (idx != next_skip_idx)
+                {
+                    new_subbuf[new_idx] = matrix_subbuf[idx];
+                    new_idx++;
+                }
+                else
+                {
+                    next_skip_idx = next_skip_idx + dim;
+                }
+                idx++;
+            }
+            res = res + matrix_subbuf[col_idx] * static_cast<T>(std::pow(-1, col_idx)) * det_rec(new_subbuf, submatr_dim);
+        }
+        delete[] new_subbuf;
+        return res;
+    }
+
+    T* matrix_buff_;
+    int nrows_;
+    int ncols_;
 };
 
 template <typename T>

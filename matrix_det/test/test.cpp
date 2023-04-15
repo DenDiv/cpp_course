@@ -5,7 +5,6 @@
 #include <iostream>
 #include <string>
 
-
 #include <Config.h>
 #include <matrix.h>
 
@@ -25,37 +24,38 @@ TEST(FuncTests, MatrixConstr)
     std::cout << std::endl;
 
     float fl_mbuff_1[9] = {1.25f, 2.25f, 3.25f, 4.25f, 5.25f, 6.25f, 7.25f, 8.25f, 9.25f};
-    Matrix<float> m3 = Matrix<float>::create<float*>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
+    Matrix<float> m3 = Matrix<float>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
     m3.print();
     std::cout << std::endl;
 
     // there calls move constr
     std::vector<int> int_mbuff_1{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    Matrix<int> m4 = Matrix<int>::create<std::vector<int>::iterator>(3, 3, int_mbuff_1.begin(), int_mbuff_1.end());
+    Matrix<int> m4 = Matrix<int>(3, 3, int_mbuff_1.begin(), int_mbuff_1.end());
     m4.print();
     std::cout << std::endl;
 
     // there calls move constr
     std::vector<int> int_mbuff_2{21, 12, 32, 44, 15, 65, 37, 28, 19};
-    m4 = Matrix<int>::create<std::vector<int>::iterator>(3, 3, int_mbuff_2.begin(), int_mbuff_2.end());
+    m4 = Matrix<int>(3, 3, int_mbuff_2.begin(), int_mbuff_2.end());
     m4.print();
     std::cout << std::endl;
     ASSERT_TRUE(1);
 }
 
+
 TEST(FuncTests, equal)
 {
     float fl_mbuff_1[9] = {1.25f, 2.25f, 3.25f, 4.25f, 5.25f, 6.25f, 7.25f, 8.25f, 9.25f};
     float fl_mbuff_2[9] = {1.25f, 2.25f, 3.25f, 4.25f, 5.25f, 6.25f, 7.25f, 8.25f, 9.25f};
-    Matrix<float> m1 = Matrix<float>::create<float*>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
-    Matrix<float> m2 = Matrix<float>::create<float*>(3, 3, fl_mbuff_2, fl_mbuff_2 + 9);
+    Matrix<float> m1 = Matrix<float>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
+    Matrix<float> m2 = Matrix<float>(3, 3, fl_mbuff_2, fl_mbuff_2 + 9);
     ASSERT_TRUE(m1.equal(m2));
 }
 
 TEST(FuncTests, transpose)
 {
     float fl_mbuff_1[9] = {1.25f, 2.25f, 3.25f, 4.25f, 5.25f, 6.25f, 7.25f, 8.25f, 9.25f};
-    Matrix<float> m1 = Matrix<float>::create<float*>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
+    Matrix<float> m1 = Matrix<float>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
     Matrix<float> m2 = m1;
     m1.transpose();
     ASSERT_TRUE(!m1.equal(m2));
@@ -66,12 +66,12 @@ TEST(FuncTests, transpose)
 TEST(FuncTests, determinant)
 {
     int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
-    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m1 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
     int det_m1 = m1.det();
     ASSERT_TRUE(det_m1 == 21);
 
     float fl_mbuff_1[9] = {1.50f, 2.00f, 5.00f, 2.00f, 3.50f, 1.00f, 1.00f, 4.00f, 2.50f};
-    Matrix<float> m2 = Matrix<float>::create<float*>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
+    Matrix<float> m2 = Matrix<float>(3, 3, fl_mbuff_1, fl_mbuff_1 + 9);
     float det_m2 = m2.det();
     ASSERT_TRUE(std::abs(det_m2 - 21.625) < eps);
 }
@@ -79,10 +79,10 @@ TEST(FuncTests, determinant)
 TEST(FuncTests, operator_brackets)
 {
     int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
-    const Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    const Matrix<int> m1 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
     ASSERT_TRUE(m1[2][2] == 2);
 
-    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
     m2[2][2] = 228;
     ASSERT_TRUE(m2[2][2] == 228);
 }
@@ -90,8 +90,8 @@ TEST(FuncTests, operator_brackets)
 TEST(FuncTests, operator_plus_ass)
 {
     int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
-    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
-    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m1 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
     m1 += m2;
     ASSERT_TRUE(m1[0][2] == 10);
     m1 += 5;
@@ -101,8 +101,8 @@ TEST(FuncTests, operator_plus_ass)
 TEST(FuncTests, operator_bin_plus)
 {
     int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
-    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
-    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m1 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
     Matrix<int> m3 = m1 + m2;
     ASSERT_TRUE(m3[0][2] == 10);
     Matrix<int> m4 = 5 + m3;
@@ -114,8 +114,8 @@ TEST(FuncTests, operator_bin_plus)
 TEST(FuncTests, operator_equal)
 {
     int int_mbuff_1[9] = {1, 2, 5, 2, 3, 1, 1, 4, 2};
-    Matrix<int> m1 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
-    Matrix<int> m2 = Matrix<int>::create<int*>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m1 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
+    Matrix<int> m2 = Matrix<int>(3, 3, int_mbuff_1, int_mbuff_1 + 9);
     ASSERT_TRUE(m1 == m2);
 }
 
@@ -200,14 +200,13 @@ TEST(End2EndTests, det_test)
 
     for (int i = 0; i < int_matr.size(); ++i)
     {
-        Matrix<int> matr = Matrix<int>::create<std::vector<int>::iterator>(int_dim[i], int_dim[i], int_matr[i].begin(), int_matr[i].end());
+        Matrix<int> matr = Matrix<int>(int_dim[i], int_dim[i], int_matr[i].begin(), int_matr[i].end());
         int_pred.push_back(matr.det());
     }
 
     for (int i = 0; i < float_matr.size(); ++i)
     {
-        Matrix<float> matr =
-            Matrix<float>::create<std::vector<float>::iterator>(float_dim[i], float_dim[i], float_matr[i].begin(), float_matr[i].end());
+        Matrix<float> matr = Matrix<float>(float_dim[i], float_dim[i], float_matr[i].begin(), float_matr[i].end());
         float_pred.push_back(matr.det());
     }
 
