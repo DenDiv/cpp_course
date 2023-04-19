@@ -24,10 +24,6 @@ private:
     };
 
 public:
-    Matrix() = default;
-
-    ~Matrix() { delete[] matrix_buff_; }
-
     Matrix(int nrows, int ncols, T val = T{}) : nrows_(nrows), ncols_(ncols)
     {
         matrix_buff_ = new T[nrows_ * ncols_];
@@ -41,6 +37,8 @@ public:
         std::copy(first, last, matrix_buff_);
     }
 
+    ~Matrix() { delete[] matrix_buff_; }
+
     // copy constr
     Matrix(const Matrix& rhs)
     {
@@ -53,9 +51,7 @@ public:
     // move constr
     Matrix(Matrix&& rhs)
     {
-        nrows_ = rhs.nrows_;
-        ncols_ = rhs.ncols_;
-        matrix_buff_ = rhs.matrix_buff_;
+        swap(*this, rhs);
         rhs.matrix_buff_ = nullptr;
     }
 
@@ -67,11 +63,8 @@ public:
             return *this;
         }
 
-        nrows_ = rhs.nrows_;
-        ncols_ = rhs.ncols_;
-        delete[] matrix_buff_;
-        matrix_buff_ = new T[nrows_ * ncols_];
-        std::copy(rhs.matrix_buff_, rhs.matrix_buff_ + nrows_ * ncols_, matrix_buff_);
+        Matrix tmp(rhs);
+        swap(*this, rhs);
         return *this;
     }
 
@@ -83,9 +76,8 @@ public:
             return *this;
         }
 
-        nrows_ = rhs.nrows_;
-        ncols_ = rhs.ncols_;
-        std::swap(matrix_buff_, rhs.matrix_buff_);
+        swap(*this, rhs);
+        rhs.matrix_buff_ = nullptr;
         return *this;
     }
 
@@ -120,6 +112,14 @@ public:
     }
 
 public:
+
+    friend void swap(Matrix& first, Matrix& second)
+    {
+        std::swap(first.nrows_, second.nrows_);
+        std::swap(first.ncols_, second.ncols_);
+        std::swap(first.matrix_buff_, second.matrix_buff_);
+    }
+
     void print() const
     {
         for (int i = 0; i < nrows_; ++i)
