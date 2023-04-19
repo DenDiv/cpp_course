@@ -15,7 +15,7 @@
 constexpr float eps = 0.0001f;
 constexpr double PI = 3.1415926535897932384626;
 
-void play_ball(Player& p, std::vector<std::shared_ptr<BallVirt>>& balls)
+void play_ball(Player& p, std::vector<std::shared_ptr<BallBase>>& balls)
 {
     for (auto& b : balls)
     {
@@ -27,7 +27,7 @@ void play_ball(Player& p, std::vector<std::shared_ptr<BallVirt>>& balls)
 
 TEST(FuncTests, ball_game)
 {
-    std::vector<std::shared_ptr<BallVirt>> ball_vec;
+    std::vector<std::shared_ptr<BallBase>> ball_vec;
     ball_vec.push_back(std::make_shared<BallSimple>(1.0, 1.0, 0.0, 0.0, 1.0, 1.0));
     ball_vec.push_back(std::make_shared<BallWind>(1.0, 1.0, 0.1, 0.0, 0.0, 1.0, 1.0));
 

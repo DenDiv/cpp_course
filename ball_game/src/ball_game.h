@@ -4,9 +4,10 @@
 #include <math.h>
 #include <mutex>
 #include <string>
+#include <string_view>
 
 
-class BallVirt
+class BallBase
 {
 protected:
     double x_;
@@ -16,8 +17,8 @@ protected:
     double t_;
 
 public:
-    BallVirt(double x, double y, double xv, double yv, double t = 0.0) : x_(x), y_(y), xv_(xv), yv_(yv), t_(t) {}
-    virtual ~BallVirt() = 0 {}
+    BallBase(double x, double y, double xv, double yv, double t = 0.0) : x_(x), y_(y), xv_(xv), yv_(yv), t_(t) {}
+    virtual ~BallBase() = 0 {}
     virtual void print() = 0 { std::cout << "x: " << x_ << " y: " << y_ << " xv: " << xv_ << " yv: " << yv_ << " t: " << t_ << std::endl; }
     virtual void fly(double t) = 0;
     virtual void push(double a_v, double a_alpha) = 0;
@@ -29,7 +30,7 @@ public:
     double get_time() const { return t_; }
 };
 
-class BallSimple final : public BallVirt
+class BallSimple final : public BallBase
 {
 private:
     double r_;
@@ -38,7 +39,7 @@ private:
 
 public:
     BallSimple(double r, double weight, double x, double y, double xv, double yv, double t = 0.0)
-        : BallVirt(x, y, xv, yv, t), r_(r), weight_(weight)
+        : BallBase(x, y, xv, yv, t), r_(r), weight_(weight)
     {}
 
     ~BallSimple() {}
@@ -65,11 +66,11 @@ public:
         std::lock_guard<std::mutex> lg(mt_);
         std::cout << "Thread ID: " << std::this_thread::get_id() << std::endl;
         std::cout << "r: " << r_ << " weight: " << weight_ << std::endl;
-        BallVirt::print();
+        BallBase::print();
     }
 };
 
-class BallWind final : public BallVirt
+class BallWind final : public BallBase
 {
 private:
     double r_;
@@ -79,7 +80,7 @@ private:
 
 public:
     BallWind(double r, double weight, double wind_speed, double x, double y, double xv, double yv, double t = 0.0)
-        : BallVirt(x, y, xv, yv, t), r_(r), weight_(weight), wind_k_(wind_speed)
+        : BallBase(x, y, xv, yv, t), r_(r), weight_(weight), wind_k_(wind_speed)
     {}
 
     ~BallWind() {}
@@ -106,18 +107,18 @@ public:
         std::lock_guard<std::mutex> lg(mt_);
         std::cout << "Thread ID: " << std::this_thread::get_id() << std::endl;
         std::cout << "r: " << r_ << " weight: " << weight_ << " wind_k: " << wind_k_ << std::endl;
-        BallVirt::print();
+        BallBase::print();
     }
 };
 
 class Player final
 {
 public:
-    Player(std::string name = "huilack") { name_ = name; }
+    Player(std::string_view name = "huilack"): name_(name) {}
 
-    void push_ball(BallVirt& b, double a_v, double a_alpha) { b.push(a_v, a_alpha); }
+    void push_ball(BallBase& b, double a_v, double a_alpha) { b.push(a_v, a_alpha); }
 
-    void fly_ball(BallVirt& b, double t) { b.fly(t); }
+    void fly_ball(BallBase& b, double t) { b.fly(t); }
 
     std::string name_;
 };
