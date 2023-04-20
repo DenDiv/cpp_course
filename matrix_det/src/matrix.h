@@ -52,7 +52,6 @@ public:
     Matrix(Matrix&& rhs)
     {
         swap(*this, rhs);
-        rhs.matrix_buff_ = nullptr;
     }
 
     // copy assignment
@@ -77,7 +76,6 @@ public:
         }
 
         swap(*this, rhs);
-        rhs.matrix_buff_ = nullptr;
         return *this;
     }
 
@@ -113,7 +111,7 @@ public:
 
 public:
 
-    friend void swap(Matrix& first, Matrix& second)
+    friend void swap(Matrix& first, Matrix& second) noexcept
     {
         std::swap(first.nrows_, second.nrows_);
         std::swap(first.ncols_, second.ncols_);
@@ -243,7 +241,7 @@ private:
         return res;
     }
 
-    T* matrix_buff_;
+    T* matrix_buff_ = nullptr;
     int nrows_;
     int ncols_;
 };
