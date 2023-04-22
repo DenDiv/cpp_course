@@ -7,34 +7,59 @@ class Matrix
 private:
     struct ProxyMatrix
     {
-        T* matrix_buff_ref;
-        int matrix_ncols;
-
         T& operator[](int n)
         {
-            assert(n < matrix_ncols);
+            check_ncols(n);
             return matrix_buff_ref[n];
         }
 
         const T& operator[](int n) const
         {
-            assert(n < matrix_ncols);
+            check_ncols(n);
             return matrix_buff_ref[n];
         }
+
+        void check_ncols(int n) const
+        {
+            if (n > matrix_ncols)
+            {
+                std::string err_msg = std::to_string(n) + " out of range, ncols = " + std::to_string(matrix_ncols);
+                throw std::out_of_range(err_msg);
+            }
+        }
+
+        T* matrix_buff_ref;
+        int matrix_ncols;
     };
 
 public:
     Matrix(int nrows, int ncols, T val = T{}) : nrows_(nrows), ncols_(ncols)
     {
         matrix_buff_ = new T[nrows_ * ncols_];
-        std::fill(matrix_buff_, matrix_buff_ + nrows_ * ncols_, val);
+        try
+        {
+            std::fill(matrix_buff_, matrix_buff_ + nrows_ * ncols_, val);
+        }
+        catch (...)
+        {
+            delete[] matrix_buff_;
+            throw;
+        }
     }
 
     template <typename It>
     Matrix(int nrows, int ncols, It first, It last) : nrows_(nrows), ncols_(ncols)
     {
         matrix_buff_ = new T[nrows_ * ncols_];
-        std::copy(first, last, matrix_buff_);
+        try
+        {
+            std::copy(first, last, matrix_buff_);
+        }
+        catch (...)
+        {
+            delete[] matrix_buff_;
+            throw;
+        }
     }
 
     ~Matrix() { delete[] matrix_buff_; }
@@ -45,14 +70,19 @@ public:
         nrows_ = rhs.nrows_;
         ncols_ = rhs.ncols_;
         matrix_buff_ = new T[nrows_ * ncols_];
-        std::copy(rhs.matrix_buff_, rhs.matrix_buff_ + nrows_ * ncols_, matrix_buff_);
+        try
+        {
+            std::copy(rhs.matrix_buff_, rhs.matrix_buff_ + nrows_ * ncols_, matrix_buff_);
+        }
+        catch (...)
+        {
+            delete[] matrix_buff_;
+            throw;
+        }
     }
 
     // move constr
-    Matrix(Matrix&& rhs)
-    {
-        swap(*this, rhs);
-    }
+    Matrix(Matrix&& rhs) noexcept { swap(*this, rhs); }
 
     // copy assignment
     Matrix& operator=(const Matrix& rhs)
@@ -63,12 +93,12 @@ public:
         }
 
         Matrix tmp(rhs);
-        swap(*this, rhs);
+        swap(*this, tmp);
         return *this;
     }
 
     // move assignment
-    Matrix& operator=(Matrix&& rhs)
+    Matrix& operator=(Matrix&& rhs) noexcept
     {
         if (this == &rhs)
         {
@@ -81,18 +111,23 @@ public:
 
     ProxyMatrix operator[](int n)
     {
-        assert(n < nrows_);
+        check_nrows(n);
         return ProxyMatrix{matrix_buff_ + n * ncols_, ncols_};
     }
 
     const ProxyMatrix operator[](int n) const
     {
-        assert(n < nrows_);
+        check_nrows(n);
         return ProxyMatrix{matrix_buff_ + n * ncols_, ncols_};
     }
 
     Matrix& operator+=(const Matrix& rhs)
     {
+        if (nrows_ != rhs.nrows_ || ncols_ != rhs.ncols_) 
+        {
+            throw std::runtime_error("nrows or ncols mismatch");
+        }
+
         for (int i = 0, i_end = nrows_ * ncols_; i < i_end; ++i)
         {
             matrix_buff_[i] += rhs.matrix_buff_[i];
@@ -110,7 +145,6 @@ public:
     }
 
 public:
-
     friend void swap(Matrix& first, Matrix& second) noexcept
     {
         std::swap(first.nrows_, second.nrows_);
@@ -239,6 +273,15 @@ private:
         }
         delete[] new_subbuf;
         return res;
+    }
+
+    void check_nrows(int n) const
+    {
+        if (n > nrows_)
+        {
+            std::string err_msg = std::to_string(n) + " out of range, nrows = " + std::to_string(nrows_);
+            throw std::out_of_range(err_msg);
+        }
     }
 
     T* matrix_buff_ = nullptr;
