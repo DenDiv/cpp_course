@@ -28,8 +28,18 @@ public:
     RBTree(const RBTree& rhs) : val_count_(rhs.val_count_)
     {
         root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
-        rec_copy(rhs.root_, root_);
+        try
+        {
+            rec_copy(rhs.root_, root_);
+        }
+        catch (...)
+        {
+            destroy_tree(root_);
+            throw;
+        }
     }
+
+    RBTree(RBTree&& rhs) noexcept { swap(*this, rhs); }
 
     RBTree& operator=(const RBTree& rhs)
     {
@@ -38,16 +48,31 @@ public:
             return *this;
         }
 
-        val_count_ = rhs.val_count_;
-        destroy_tree(root_);
-        root_ = new Node{rhs.root_->data, nullptr, nullptr, nullptr, rhs.root_->is_red, rhs.root_->min_stat};
-        rec_copy(rhs.root_, root_);
+        RBTree tmp(rhs);
+        swap(*this, tmp);
+        return *this;
+    }
+
+    RBTree& operator=(RBTree&& rhs) noexcept
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        swap(*this, rhs);
         return *this;
     }
 
     ~RBTree() { destroy_tree(root_); }
 
 public:
+    friend void swap(RBTree& first, RBTree& second) noexcept
+    {
+        std::swap(first.val_count_, second.val_count_);
+        std::swap(first.root_, second.root_);
+    }
+
     void insert(int key)
     {
         NodePtr new_node = new Node{key, nullptr, nullptr, nullptr, true, 1};
@@ -147,25 +172,13 @@ public:
     }
 
 public:
-    void set_root(NodePtr root)
-    {
-        root_ = root;
-    }
+    void set_root(NodePtr root) { root_ = root; }
 
-    NodePtr get_root()
-    {
-        return root_;
-    }
+    NodePtr get_root() { return root_; }
 
-    void check_leftRotate(NodePtr node)
-    {
-        leftRotate(node);
-    }
+    void check_leftRotate(NodePtr node) { leftRotate(node); }
 
-    void check_rightRotate(NodePtr node)
-    {
-        rightRotate(node);
-    }
+    void check_rightRotate(NodePtr node) { rightRotate(node); }
 
 private:
     void leftRotate(NodePtr node)

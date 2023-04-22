@@ -93,7 +93,7 @@ public:
         }
 
         Matrix tmp(rhs);
-        swap(*this, rhs);
+        swap(*this, tmp);
         return *this;
     }
 
