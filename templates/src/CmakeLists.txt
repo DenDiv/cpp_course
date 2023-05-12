@@ -1,0 +1,4 @@
+add_library(Tasks INTERFACE)
+target_include_directories(Tasks
+          INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+          )
